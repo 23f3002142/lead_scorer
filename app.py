@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from services import calculate_rule_score
 import pandas as pd
 import io
 import os
@@ -36,9 +37,9 @@ def set_offer():
     Offer.query.delete()
     
     new_offer = Offer(
-        name=data['name'], 
-        value_props=data['value_props'], 
-        ideal_use_cases=data['ideal_use_cases']
+        name=data['name'], #type: ignore
+        value_props=data['value_props'], #type: ignore
+        ideal_use_cases=data['ideal_use_cases']#type: ignore
     )
     db.session.add(new_offer)
     db.session.commit()
@@ -60,7 +61,7 @@ def upload_leads_csv():
     # ... (column validation remains the same) ...
     
     # Create Lead objects and add to the database session
-    new_leads = [Lead(**row) for row in df.to_dict(orient='records')]
+    new_leads = [Lead(**row) for row in df.to_dict(orient='records')] #type: ignore
     db.session.add_all(new_leads)
     db.session.commit()
 
@@ -68,9 +69,37 @@ def upload_leads_csv():
 
 @app.route("/score", methods=['POST'])
 def score_leads():
-    # TODO: Implement scoring logic by querying leads, scoring them, and updating the DB.
-    return jsonify({"message": "Scoring initiated (logic to be implemented)."})
+    """
+    Scores all uploaded leads using the rule-based and AI layers.
+    (Currently, only the rule-based layer is implemented).
+    """
+    # 1. Fetch the current offer context
+    current_offer = Offer.query.first()
+    if not current_offer:
+        return jsonify({"error": "No offer has been set. Please POST to /offer first."}), 400
 
+    # 2. Fetch all leads that haven't been scored yet
+    leads_to_score = Lead.query.all()
+    if not leads_to_score:
+        return jsonify({"message": "No leads found to score."}), 200
+
+    # 3. Score each lead and update its record
+    for lead in leads_to_score:
+        rule_score = calculate_rule_score(lead, current_offer)
+        
+        # For now, the total score is just the rule score.
+        # We will add the AI score in the next step.
+        lead.score = rule_score
+        
+        # We'll update intent and reasoning later.
+            
+    # 4. Commit all the score updates to the database
+    db.session.commit()
+
+    return jsonify({
+        "message": f"Successfully scored {len(leads_to_score)} leads.",
+        "note": "Currently using rule-based scoring only."
+    })
 @app.route("/results", methods=['GET'])
 def get_results():
     all_leads = Lead.query.all()
