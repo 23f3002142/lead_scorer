@@ -67,39 +67,42 @@ def upload_leads_csv():
 
     return jsonify({"message": f"{len(new_leads)} leads have been uploaded and are ready for scoring."}), 201
 
-@app.route("/score", methods=['POST'])
+@@app.route("/score", methods=['POST'])
 def score_leads():
     """
-    Scores all uploaded leads using the rule-based and AI layers.
-    (Currently, only the rule-based layer is implemented).
+    Scores all uploaded leads using both rule-based and AI layers.
     """
-    # 1. Fetch the current offer context
     current_offer = Offer.query.first()
     if not current_offer:
         return jsonify({"error": "No offer has been set. Please POST to /offer first."}), 400
 
-    # 2. Fetch all leads that haven't been scored yet
     leads_to_score = Lead.query.all()
     if not leads_to_score:
         return jsonify({"message": "No leads found to score."}), 200
 
-    # 3. Score each lead and update its record
+    scored_count = 0
     for lead in leads_to_score:
+        # 1. Get score from the rule-based layer
         rule_score = calculate_rule_score(lead, current_offer)
+
+        # 2. Get score and reasoning from the AI layer
+        ai_result = get_ai_score_and_reasoning(lead, current_offer)
         
-        # For now, the total score is just the rule score.
-        # We will add the AI score in the next step.
-        lead.score = rule_score
-        
-        # We'll update intent and reasoning later.
+        # 3. Combine scores and update lead record
+        lead.score = rule_score + ai_result["ai_points"]
+        lead.intent = ai_result["intent"]
+        lead.reasoning = ai_result["reasoning"]
+        scored_count += 1
             
-    # 4. Commit all the score updates to the database
+    # Commit all the updates to the database
     db.session.commit()
 
     return jsonify({
-        "message": f"Successfully scored {len(leads_to_score)} leads.",
-        "note": "Currently using rule-based scoring only."
+        "message": f"Successfully scored {scored_count} leads.",
+        "note": "Scores are a combination of rule-based logic and AI analysis."
     })
+
+
 @app.route("/results", methods=['GET'])
 def get_results():
     all_leads = Lead.query.all()
