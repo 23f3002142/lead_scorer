@@ -1,5 +1,6 @@
 # AI-Powered Lead Scoring API
 
+[![Live Status](https://img.shields.io/website?up_message=online&down_message=offline&url=https%3A%2F%2Flead-scorer-api-iygt.onrender.com%2F)](https://lead-scorer-api-iygt.onrender.com/)
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
@@ -27,7 +28,7 @@ A backend service designed for a hiring assignment that accepts product informat
 
 ## API Endpoints
 
-The base URL for all local endpoints is `http://127.0.0.1:5000`.
+The live base URL for all endpoints is `https://lead-scorer-api-iygt.onrender.com`.
 
 | Method | Endpoint             | Description                                          | Request Body / Form Data                                     | Success Response                                                                |
 | :----- | :------------------- | :--------------------------------------------------- | :----------------------------------------------------------- | :------------------------------------------------------------------------------ |
@@ -91,35 +92,35 @@ Follow these steps to set up and run the project on your local machine.
 
 ## How to Use (Testing Workflow)
 
-Use an API client like [Postman](https://www.postman.com/) or `cURL` to interact with the endpoints in the following order:
+Use an API client like [Postman](https://www.postman.com/) or `cURL` to interact with the endpoints in the following order. Replace `http://127.0.0.1:5000` with the live URL `https://lead-scorer-api-iygt.onrender.com` when testing the deployed version.
 
 1.  **Set the Offer:**
     -   Create a file `offer.json` with your product details.
     -   Send the request:
         ```bash
-        curl -X POST -H "Content-Type: application/json" --data @offer.json [http://127.0.0.1:5000/offer](http://127.0.0.1:5000/offer)
+        curl -X POST -H "Content-Type: application/json" --data @offer.json [https://lead-scorer-api-iygt.onrender.com/offer](https://lead-scorer-api-iygt.onrender.com/offer)
         ```
 
 2.  **Upload Leads:**
     -   Ensure you have a `leads.csv` file in your directory.
     -   Send the request:
         ```bash
-        curl -X POST -F "file=@leads.csv" [http://127.0.0.1:5000/leads/upload](http://127.0.0.1:5000/leads/upload)
+        curl -X POST -F "file=@leads.csv" [https://lead-scorer-api-iygt.onrender.com/leads/upload](https://lead-scorer-api-iygt.onrender.com/leads/upload)
         ```
 
 3.  **Trigger Scoring:**
     ```bash
-    curl -X POST [http://127.0.0.1:5000/score](http://127.0.0.1:5000/score)
+    curl -X POST [https://lead-scorer-api-iygt.onrender.com/score](https://lead-scorer-api-iygt.onrender.com/score)
     ```
 
 4.  **Get Results:**
     -   **JSON:**
         ```bash
-        curl [http://127.0.0.1:5000/results](http://127.0.0.1:5000/results)
+        curl [https://lead-scorer-api-iygt.onrender.com/results](https://lead-scorer-api-iygt.onrender.com/results)
         ```
     -   **CSV:**
         ```bash
-        curl [http://127.0.0.1:5000/results/csv](http://127.0.0.1:5000/results/csv) --output scored_leads.csv
+        curl [https://lead-scorer-api-iygt.onrender.com/results/csv](https://lead-scorer-api-iygt.onrender.com/results/csv) --output scored_leads.csv
         ```
 
 ### Offer JSON Example
@@ -164,8 +165,27 @@ You can also run this application within a Docker container for a more isolated 
 
 ## Deployment
 
-**[PLACEHOLDER]**
+[![Live Status](https://img.shields.io/website?up_message=online&down_message=offline&url=https%3A%2F%2Flead-scorer-api-iygt.onrender.com%2F)](https://lead-scorer-api-iygt.onrender.com/)
 
-This application is designed for containerized deployment. The live API base URL will be provided here.
+This application has been successfully deployed on Render and is live.
 
--   **Live API Base URL:** `[Link]`
+-   **Live API Base URL:** `https://lead-scorer-api-iygt.onrender.com`
+
+You can use this base URL with tools like Postman to interact with the live API endpoints. For example, to get the results, the endpoint would be `https://lead-scorer-api-iygt.onrender.com/results`.
+
+---
+
+## Screenshots
+
+Here are a few examples of the API in action using the live deployed endpoints in Postman.
+
+### 1. Setting the Offer Details (`POST /offer`)
+![Setting the Offer](./screenshots/offer.png)
+
+### 2. Uploading the Leads CSV (`POST /leads/upload`)
+![Uploading Leads](./screenshots/upload.png)
+
+### 3. Viewing the Scored Results (`GET /results`)
+![Viewing Results](./screenshots/results.png)
+
+---
