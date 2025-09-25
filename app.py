@@ -1,5 +1,5 @@
-from flask import Flask, request, jsonify
-from services import calculate_rule_score
+from flask import Flask, request, jsonify, Response
+from services import calculate_rule_score, get_ai_score_and_reasoning
 import pandas as pd
 import io
 import os
@@ -67,7 +67,7 @@ def upload_leads_csv():
 
     return jsonify({"message": f"{len(new_leads)} leads have been uploaded and are ready for scoring."}), 201
 
-@@app.route("/score", methods=['POST'])
+@app.route("/score", methods=['POST'])
 def score_leads():
     """
     Scores all uploaded leads using both rule-based and AI layers.
@@ -109,6 +109,40 @@ def get_results():
     # Convert lead objects to dictionaries for the JSON response
     results = [lead.to_dict() for lead in all_leads]
     return jsonify(results)
+
+@app.route("/results/csv", methods=['GET'])
+def get_results_csv():
+    """
+    Exports the scored leads as a CSV file.
+    """
+    try:
+        leads = Lead.query.all()
+        if not leads:
+            return jsonify({"message": "No scored leads to export."}), 404
+
+        # Convert the list of lead objects into a list of dictionaries
+        leads_data = [lead.to_dict() for lead in leads]
+        
+        # Create a pandas DataFrame
+        df = pd.DataFrame(leads_data)
+
+        # We can drop columns we don't need in the final export, like the internal ID
+        if 'id' in df.columns:
+            df = df.drop(columns=['id'])
+
+        # Convert the DataFrame to a CSV string in memory
+        csv_output = df.to_csv(index=False)
+
+        # Return the CSV string as a downloadable file
+        return Response(
+            csv_output,
+            mimetype="text/csv",
+            headers={"Content-disposition":
+                     "attachment; filename=scored_leads.csv"}
+        )
+    except Exception as e:
+        return jsonify({"error": f"An error occurred while generating the CSV: {str(e)}"}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)

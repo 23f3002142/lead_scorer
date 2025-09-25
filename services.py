@@ -6,7 +6,7 @@ load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+    genai.configure(api_key=GEMINI_API_KEY) #type:ignore
 # --- Rule-Based Scoring Configuration ---
 # You can easily adjust these keywords to refine the scoring logic
 DECISION_MAKER_KEYWORDS = ['head', 'vp', 'director', 'chief', 'founder', 'ceo', 'manager']
@@ -90,7 +90,7 @@ def get_ai_score_and_reasoning(lead: Lead, offer: Offer) -> dict:
 
     try:
         # Initialize the Gemini model
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-1.5-flash') #type: ignore
         # Send the prompt to the model
         response = model.generate_content(prompt)
         
