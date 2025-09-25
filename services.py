@@ -7,6 +7,7 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY) #type:ignore
+
 # --- Rule-Based Scoring Configuration ---
 # You can easily adjust these keywords to refine the scoring logic
 DECISION_MAKER_KEYWORDS = ['head', 'vp', 'director', 'chief', 'founder', 'ceo', 'manager']

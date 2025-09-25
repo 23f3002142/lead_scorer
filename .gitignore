@@ -1,6 +1,8 @@
 # Environment variables
 .env
 
+database.db
+
 # Python artifacts
 __pycache__/
 *.pyc
